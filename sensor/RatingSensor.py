@@ -1,18 +1,13 @@
 import os
+import json
 import random
 import asyncio
-from functools import partial
 
 import websockets
-import json
-import logging
-
+from functools import partial
 from dotenv import load_dotenv
-
 from sensor.CSVLoader import generator_from_csv
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from sensor.log import logger
 
 
 async def broadcast_rating_data(websocket, path, ratings_source_path):
