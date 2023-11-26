@@ -1,21 +1,17 @@
-import os
 import json
 import random
 import asyncio
 
 import websockets
-from functools import partial
-from dotenv import load_dotenv
 from sensor.CSVLoader import generator_from_csv
+from sensor.consts import HOST_URL, HOST_PORT, RATINGS_FILE_PATH, MIN_NEW_RATING_RATE, MAX_NEW_RATING_RATE
 from sensor.log import logger
 
 
-async def broadcast_rating_data(websocket, path, ratings_source_path):
+async def broadcast_rating_data(websocket, path):
     logger.info("User has been connected!")
 
-    for row in generator_from_csv(ratings_source_path):
-        MIN_NEW_RATING_RATE = 0.5
-        MAX_NEW_RATING_RATE = 2
+    for row in generator_from_csv(RATINGS_FILE_PATH):
         rating_rate = random.uniform(MIN_NEW_RATING_RATE, MAX_NEW_RATING_RATE)
 
         await websocket.send(json.dumps(row))
@@ -24,11 +20,9 @@ async def broadcast_rating_data(websocket, path, ratings_source_path):
 
 
 async def run_server():
-    load_dotenv()
-    async with websockets.serve(partial(broadcast_rating_data,
-                                        ratings_source_path=os.getenv('RATINGS_FILE_PATH')),
-                                os.getenv('URL'),
-                                os.getenv('PORT')):
+    async with websockets.serve(broadcast_rating_data,
+                                HOST_URL,
+                                HOST_PORT):
         await asyncio.Future()
 
 

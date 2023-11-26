@@ -1,12 +1,10 @@
 import json
 import asyncio
 import websockets
-import os
-from dotenv import load_dotenv
 
+from receiver.consts import SENSOR_URL
 from receiver.log import logger
 
-load_dotenv()
 
 
 async def listen_for_new_ratings():
@@ -18,5 +16,4 @@ async def listen_for_new_ratings():
             logger.info(f"Rating data has been received: {rating_data}")
 
 
-SENSOR_URL = os.getenv('SENSOR_URL')
 asyncio.run(listen_for_new_ratings())
