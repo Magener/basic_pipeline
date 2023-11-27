@@ -1,36 +1,27 @@
 import json
 import random
-import asyncio
+import time
 
-import websockets
+from confluent_kafka.cimpl import Producer
+
 from sensor.CSVLoader import generator_from_csv
-from sensor.consts import HOST_URL, HOST_PORT, RATINGS_FILE_PATH, MIN_NEW_RATING_RATE, MAX_NEW_RATING_RATE
+from sensor.consts import RATINGS_FILE_PATH, KAFKA_BROKER_URL, RATING_TOPIC_NAME, MIN_NEW_RATING_RATE, \
+    MAX_NEW_RATING_RATE
 from sensor.log import logger
 
 
-async def broadcast_rating_data(websocket, path):
-    logger.info("User has been connected!")
+producer_conf = {
+    'bootstrap.servers': KAFKA_BROKER_URL
+}
 
-    for row in generator_from_csv(RATINGS_FILE_PATH):
-        rating_rate = random.uniform(MIN_NEW_RATING_RATE, MAX_NEW_RATING_RATE)
+producer = Producer(producer_conf)
 
-        await websocket.send(json.dumps(row))
-        logger.info(f"Rating has been sent! {row}")
-        await asyncio.sleep(rating_rate)
+for row in generator_from_csv(RATINGS_FILE_PATH):
+    delay_between_ratings = random.uniform(MIN_NEW_RATING_RATE, MAX_NEW_RATING_RATE)
 
+    producer.produce(topic=RATING_TOPIC_NAME, value=json.dumps(row))
+    logger.info(f"Rating has been sent! {row}")
 
-async def run_server():
-    async with websockets.serve(broadcast_rating_data,
-                                HOST_URL,
-                                HOST_PORT):
-        await asyncio.Future()
+    time.sleep(delay_between_ratings)
 
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(run_server())
-    except KeyboardInterrupt:
-        pass
-    finally:
-        loop.close()
+producer.flush()
