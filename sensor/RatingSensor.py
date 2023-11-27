@@ -16,8 +16,6 @@ producer_conf = {
 
 producer = Producer(producer_conf)
 
-logger.info("User has been connected!")
-
 for row in generator_from_csv(RATINGS_FILE_PATH):
     delay_between_ratings = random.uniform(MIN_NEW_RATING_RATE, MAX_NEW_RATING_RATE)
 
