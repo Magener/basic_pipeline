@@ -2,9 +2,9 @@ import requests
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from presenter.consts import BOOKS_PRESENTED
+from presenter.consts import BOOKS_PRESENTED, API_ENDPOINT
 
-data = requests.get(url="http://127.0.0.1:8001/api/books").json()[0:BOOKS_PRESENTED]
+data = requests.get(url=f"{API_ENDPOINT}/api/books").json()[0:BOOKS_PRESENTED] # TODO: do filteration & ordering on API_ENDPOINT side, not client.
 
 df = pd.DataFrame(data)
 
