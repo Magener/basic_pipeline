@@ -1,12 +1,7 @@
 # TODO: set as null if connected was dropped.
 import psycopg2
 
-# TODO: move variables to .env
-DB_NAME = "postgres"
-DB_USER = "postgres"
-DB_PASSWORD = "pgsql"
-DB_HOST = "localhost"
-DB_PORT = "5432"
+from receiver.consts import DB_NAME, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD
 
 
 class PostgresConnection:
