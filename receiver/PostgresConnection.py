@@ -1,4 +1,3 @@
-# TODO: set as null if connected was dropped.
 import psycopg2
 
 from receiver.consts import DB_NAME, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD
@@ -19,7 +18,7 @@ class PostgresConnection:
 
     @classmethod
     def __ensure_connected(cls):
-        if not cls.__connection:
+        if not cls.__connection or cls.__connection.closed:
             cls.__connection = psycopg2.connect(
                 dbname=DB_NAME,
                 user=DB_USER,

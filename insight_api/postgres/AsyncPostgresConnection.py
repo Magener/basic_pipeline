@@ -1,4 +1,3 @@
-# TODO: set as null if connected was dropped.
 import asyncpg
 
 from insight_api.consts import DB_NAME, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD
@@ -9,7 +8,7 @@ class AsyncPostgresConnection:
 
     @classmethod
     async def get_connection(cls):
-        if not cls.__connection:
+        if not cls.__connection or cls.__connection.is_closed():
             cls.__connection = await asyncpg.connect(user=DB_USER, password=DB_PASSWORD,
                                                      database=DB_NAME, host=DB_HOST, port=DB_PORT)
 
