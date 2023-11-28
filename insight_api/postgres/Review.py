@@ -8,7 +8,7 @@ def find_book_ratings(minimum_ratings) -> []:
     # TODO: convert average to number
     cur = PostgresConnection().get_connection().cursor()
     query = """
-    SELECT book_id, AVG(score) as avg_score FROM hafifa.ratings GROUP BY book_id HAVING COUNT(*) > %s;
+    SELECT book_id, AVG(score) as avg_score FROM hafifa.ratings GROUP BY book_id HAVING COUNT(*) > %s ORDER BY avg_score DESC;
     """
     data = (minimum_ratings,)
 
