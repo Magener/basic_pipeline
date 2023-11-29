@@ -1,15 +1,13 @@
 from receiver.PostgresConnection import PostgresConnection
 
 
-# TODO: separate afterwards & complete in Review.py on insight_api as wel
-# strategy?
-# when should I cur.close?
+# TODO: separate afterwards & complete in Review.py (after converting to async)
 from receiver.log import logger
 
 
 def commit_review(reviewer_id, book_id, score):
     cur = PostgresConnection().get_connection().cursor()
-    query = """INSERT INTO hafifa.ratings(reviewer_id, book_id, score) VALUES (%s, %s, %s);"""  # TODO: why not use fstring?
+    query = """INSERT INTO hafifa.ratings(reviewer_id, book_id, score) VALUES (%s, %s, %s);"""
     data = (reviewer_id, book_id, score)
 
     cur.execute(query, data)
@@ -17,7 +15,7 @@ def commit_review(reviewer_id, book_id, score):
 
     if cur.rowcount == 0:
         raise RuntimeError(
-            f"Insertion has failed: {cur.statusmessage}")  # TODO; separate as a different exception & catch it
+            f"Insertion has failed: {cur.statusmessage}")
 
     PostgresConnection().get_connection().commit()
 
