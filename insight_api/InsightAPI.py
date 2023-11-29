@@ -9,7 +9,7 @@ from insight_api.log import logger
 from insight_api.postgres.AsyncPostgresConnection import AsyncPostgresConnection
 from insight_api.postgres.Review import find_top_rated_books
 
-
+# Allows for tear down, yield separates set up from tear down parts
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield

@@ -22,7 +22,7 @@ try:
             logger.info(f"Received message: {content}")
 
             new_data = {"incoming_data": content}
-            df = pd.DataFrame(data=new_data, index=["message"])
-            write_deltalake(PATH_TO_DB, df, mode="append")
+            data_arrived = pd.DataFrame(data=new_data, index=["message"])
+            write_deltalake(PATH_TO_DB, data_arrived, mode="append")
 finally:
     consumer.close()
