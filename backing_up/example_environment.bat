@@ -1,0 +1,5 @@
+set PGPASSWORD=
+set POSTGRES_HOME=
+set DB_NAME=
+set DB_USER=
+set BACKUP_DIR=
