@@ -2,16 +2,10 @@ import pandas as pd
 from confluent_kafka.cimpl import Consumer
 from deltalake.writer import write_deltalake
 
+from data_lake_consumer.MessageValidation import validate_message
 from data_lake_consumer.consts import PATH_TO_DB, CONSUMER_CONF, KAFKA_BROKER_URL, CONSUMER_POLL_TIMEOUT
 from data_lake_consumer.log import logger
 from sensor.consts import RATING_TOPIC_NAME
-
-
-# TODO: move file as ncessary.
-def validate_message(msg) -> None:
-    if msg.error():
-        raise RuntimeError(msg.error())
-
 
 consumer = Consumer(CONSUMER_CONF)
 consumer.subscribe([RATING_TOPIC_NAME])
