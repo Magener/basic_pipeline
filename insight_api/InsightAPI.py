@@ -1,8 +1,6 @@
-import signal
 from contextlib import asynccontextmanager
 
 import uvicorn
-from asyncpg import PostgresError
 from fastapi import FastAPI, HTTPException
 
 from insight_api.consts import MIN_RATINGS_FOR_INCLUSION, PORT, HOST
