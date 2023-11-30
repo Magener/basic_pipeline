@@ -9,12 +9,16 @@ from receiver.log import logger
 from receiver.postgresql.Review import commit_review
 
 
-async def consume_messages():
-    consumer = AIOKafkaConsumer(
+async def initialize_kafka_consumer():
+    return AIOKafkaConsumer(
         RATING_TOPIC_NAME,
         loop=asyncio.get_event_loop(),
         bootstrap_servers=KAFKA_BROKER_URL
     )
+
+
+async def consume_messages():
+    consumer = await initialize_kafka_consumer()
 
     await consumer.start()
 
