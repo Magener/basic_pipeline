@@ -1,23 +1,17 @@
-from receiver.PostgresConnection import PostgresConnection
-
-
-# TODO: separate afterwards & complete in Review.py (after converting to async)
+from insight_api.postgres.AsyncPostgresConnection import AsyncPostgresConnection
 from receiver.log import logger
 
 
-def commit_review(reviewer_id, book_id, score):
-    cur = PostgresConnection().get_connection().cursor()
-    query = """INSERT INTO hafifa.ratings(reviewer_id, book_id, score) VALUES (%s, %s, %s);"""
-    data = (reviewer_id, book_id, score)
+async def commit_review(reviewer_id, book_id, score):
+    connection = await AsyncPostgresConnection().get_connection()
 
-    cur.execute(query, data)
-    logger.debug(f"Regstered {data} in database.")
+    QUERY = """INSERT INTO hafifa.ratings(reviewer_id, book_id, score) VALUES ($1, $2, $3);"""
 
-    if cur.rowcount == 0:
-        raise RuntimeError(
-            f"Insertion has failed: {cur.statusmessage}")
+    result_message = await connection.execute(QUERY, reviewer_id, book_id, score)
 
-    PostgresConnection().get_connection().commit()
+    insert_successful = result_message.startswith("INSERT")
 
-    cur.close()
-
+    if insert_successful:
+        logger.debug(f"Regstered {(reviewer_id, book_id, score)} in database.")
+    else:
+        raise RuntimeError(f"Insertion has failed: {result_message}")

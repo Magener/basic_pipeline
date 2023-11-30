@@ -1,26 +1,39 @@
+import asyncio
 import json
 
-from confluent_kafka.cimpl import Consumer
+from aiokafka import AIOKafkaConsumer
 
-from receiver.MessageValidation import validate_message, extract_rating_data
-from receiver.PostgresConnection import PostgresConnection
-from receiver.consts import KAFKA_BROKER_URL, CONSUMER_CONF, RATING_TOPIC_NAME, CONSUMER_POLL_TIMEOUT
+from receiver.MessageValidation import extract_rating_data
+from receiver.consts import KAFKA_BROKER_URL, RATING_TOPIC_NAME
 from receiver.log import logger
 from receiver.postgresql.Review import commit_review
 
-consumer = Consumer(CONSUMER_CONF)
-consumer.subscribe([RATING_TOPIC_NAME])
 
-try:
-    logger.info(f'Connected to {KAFKA_BROKER_URL}')
-    while True:
-        msg = consumer.poll(timeout=CONSUMER_POLL_TIMEOUT)
+async def initialize_kafka_consumer():
+    return AIOKafkaConsumer(
+        RATING_TOPIC_NAME,
+        loop=asyncio.get_event_loop(),
+        bootstrap_servers=KAFKA_BROKER_URL
+    )
 
-        if msg:
-            validate_message(msg)
-            rating_data = json.loads(msg.value())
-            commit_review(*extract_rating_data(rating_data))
+
+async def consume_messages():
+    consumer = await initialize_kafka_consumer()
+
+    await consumer.start()
+
+    try:
+        async for message in consumer:
+            rating_data = json.loads(message.value)
+            await commit_review(*extract_rating_data(rating_data))
             logger.info(f"Saved in DB: {rating_data}")
-finally:
-    consumer.close()
-    PostgresConnection().close()
+    finally:
+        await consumer.stop()
+
+
+async def main():
+    await consume_messages()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
