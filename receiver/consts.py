@@ -11,9 +11,3 @@ DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST')
 DB_PORT = os.getenv('DB_PORT')
-
-
-CONSUMER_CONF = {
-        'bootstrap.servers': KAFKA_BROKER_URL,
-        'group.id': 'websocket-consumer-group'
-    }
