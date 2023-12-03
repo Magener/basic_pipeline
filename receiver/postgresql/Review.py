@@ -1,11 +1,11 @@
 from insight_api.postgres.AsyncPostgresConnection import AsyncPostgresConnection
+from receiver.consts import RATING_TABLE_NAME
 from receiver.log import logger
 
 
 async def commit_review(reviewer_id, book_id, score):
     connection = await AsyncPostgresConnection().get_connection()
-
-    QUERY = """INSERT INTO hafifa.ratings(reviewer_id, book_id, score) VALUES ($1, $2, $3);"""
+    QUERY = f"""INSERT INTO {RATING_TABLE_NAME}(reviewer_id, book_id, score) VALUES ($1, $2, $3);"""
 
     result_message = await connection.execute(QUERY, reviewer_id, book_id, score)
 
