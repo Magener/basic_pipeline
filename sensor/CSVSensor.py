@@ -20,7 +20,7 @@ for row in generator_from_csv(RATINGS_FILE_PATH):
     delay_between_ratings = random.uniform(MIN_NEW_RATING_RATE, MAX_NEW_RATING_RATE)
 
     producer.produce(topic=RATING_TOPIC_NAME, value=json.dumps(row))
-    logger.info(f"Rating has been sent! {row}")
+    logger.info(f"{row} has been sent")
 
     time.sleep(delay_between_ratings)
 
