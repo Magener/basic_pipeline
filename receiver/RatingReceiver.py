@@ -3,7 +3,7 @@ import json
 
 from aiokafka import AIOKafkaConsumer
 
-from receiver.MessageValidation import extract_rating_data
+from receiver.Rating import extract_rating_data
 from receiver.consts import KAFKA_BROKER_URL, RATING_TOPIC_NAME
 from receiver.postgresql.Review import commit_review
 
