@@ -12,6 +12,6 @@ async def commit_review(rating: Rating) -> None:
     insert_successful = result_message.startswith("INSERT")
 
     if insert_successful:
-        logger.debug(f"Regstered {rating} in database.")
+        logger.info(f"Regstered {rating} in database.")
     else:
         raise RuntimeError(f"Insertion has failed: {result_message}")
