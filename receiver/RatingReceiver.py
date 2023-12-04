@@ -1,6 +1,5 @@
 import asyncio
 import json
-from dataclasses import asdict
 
 from aiokafka import AIOKafkaConsumer
 
@@ -26,8 +25,7 @@ async def consume_messages():
         async for message in consumer:
             rating_data = json.loads(message.value)
             transformed_rating = extract_rating_data(rating_data).apply_transformation()
-            await commit_review(**asdict(transformed_rating))
-            # logger.info(f"Saved in DB: {transformed_rating}")
+            asyncio.create_task(commit_review(transformed_rating))
     finally:
         await consumer.stop()
 
