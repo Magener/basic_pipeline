@@ -1,5 +1,5 @@
 def get_book_identifier(row) -> str:
-    if "book_name" in row:
+    if row["book_name"]:
         return row["book_name"]
     return row["book_id"]
 
