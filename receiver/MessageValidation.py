@@ -1,3 +1,5 @@
+from typing import Dict
+
 from receiver.Rating import Rating
 
 
@@ -6,7 +8,7 @@ def validate_message(msg) -> None:
         raise RuntimeError(msg.error())
 
 
-def extract_rating_data(rating_data) -> Rating:
+def extract_rating_data(rating_data: Dict) -> Rating:
     try:
         return Rating(
             reviewer_id=int(rating_data["User-ID"]),
