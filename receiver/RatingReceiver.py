@@ -1,10 +1,10 @@
 import asyncio
 import json
+from dataclasses import asdict
 
 from aiokafka import AIOKafkaConsumer
 
 from receiver.MessageValidation import extract_rating_data
-from receiver.Transformations import transform_rating
 from receiver.consts import KAFKA_BROKER_URL, RATING_TOPIC_NAME
 from receiver.log import logger
 from receiver.postgresql.Review import commit_review
@@ -26,8 +26,8 @@ async def consume_messages():
     try:
         async for message in consumer:
             rating_data = json.loads(message.value)
-            transformed_rating = transform_rating(extract_rating_data(rating_data))
-            await commit_review(**transformed_rating)
+            transformed_rating = extract_rating_data(rating_data).apply_transformation()
+            await commit_review(**asdict(transformed_rating))
             logger.info(f"Saved in DB: {transformed_rating}")
     finally:
         await consumer.stop()
