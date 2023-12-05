@@ -5,8 +5,8 @@ from aiokafka import AIOKafkaConsumer
 
 from receiver.consts import KAFKA_BROKER_URL, RATING_TOPIC_NAME
 from receiver.log import logger
-from receiver.MessageHandlingStrategy import MessageHandlingStrategy
 from receiver.postgresql.AsyncPostgresConnection import AsyncPostgresConnection
+from receiver.receiver.MessageHandlingStrategy import error_handling_async_wrapper, MessageHandlingStrategy
 
 
 class JSONReceiver:
@@ -21,12 +21,11 @@ class JSONReceiver:
 
         await consumer.start()
 
-    #TODO: add error handler for event loop as well
         async for message in consumer:
             try:
                 data = message.value
                 logger.info(f"Received Data: {data}")
-                asyncio.create_task(self.handler_strategy.on_message(data))
+                asyncio.create_task(error_handling_async_wrapper(self.handler_strategy.on_message(data)))
             except BaseException as e:
                 logger.error(f"Exception has been raised: {e}")
 

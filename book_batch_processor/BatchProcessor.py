@@ -4,6 +4,7 @@ from typing import Callable
 from book_batch_processor.consts import PROCESSING_INTERVAL
 from book_batch_processor.ExitCatcher import ExitCatcher
 from book_batch_processor.log import logger
+from book_batch_processor.MessageHandling import error_handling_async_wrapper
 from book_batch_processor.postgres.BookOperations import clear_processed_books, organize_book_data
 
 
@@ -25,7 +26,7 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     ExitCatcher.ensure_initialized()
 
-    task = loop.create_task(periodically_execute_callback(process_book_data))
+    task = loop.create_task(error_handling_async_wrapper(periodically_execute_callback(process_book_data)))
     ExitCatcher.add_handler(task.cancel)
 
     try:

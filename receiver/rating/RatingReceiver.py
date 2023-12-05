@@ -1,7 +1,7 @@
-from receiver.JSONReceiver import JSONReceiver
-from receiver.MessageHandlingStrategy import MessageHandlingStrategy
-from receiver.Rating import extract_rating_data
-from receiver.rating.Review import commit_review
+from receiver.receiver.JSONReceiver import JSONReceiver
+from receiver.receiver.MessageHandlingStrategy import MessageHandlingStrategy
+from receiver.rating.Rating import extract_rating_data
+from receiver.rating.RatingDBInteractions import commit_review
 
 
 class CommitReview(MessageHandlingStrategy):

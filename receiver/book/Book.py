@@ -1,20 +1,23 @@
-from receiver.Book import Book
-from receiver.log import logger
-from receiver.postgresql.AsyncPostgresConnection import AsyncPostgresConnection
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Dict
 
 
-async def commit_raw_book(book: Book):
-    async with await AsyncPostgresConnection.get_connection() as connection:
-        QUERY = "INSERT INTO hafifa.unprocessed_books" \
-                "(isbn, book_title, book_author, year_of_publication, publisher)" \
-                " VALUES ($1, $2, $3, $4, $5);"
+@dataclass
+class Book:
+    id: str
+    book_title: str
+    book_author: str
+    year_of_publication: int
+    publisher: str
 
-        result_message = await connection.execute(QUERY, book.id, book.book_title, book.book_author,
-                                                  book.year_of_publication, book.publisher)
 
-        insert_successful = result_message.startswith("INSERT")
-
-        if insert_successful:
-            logger.debug(f"Regstered {book} in database.")
-        else:
-            raise RuntimeError(f"Insertion has failed: {result_message}")
+def extract_book_data(book_data: Dict) -> Book:
+    return Book(
+        id=book_data["ISBN"],
+        book_title=book_data["Book-Title"],
+        book_author=book_data["Book-Author"],
+        year_of_publication=int(book_data["Year-Of-Publication"]),
+        publisher=book_data["Publisher"]
+    )

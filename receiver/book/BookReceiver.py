@@ -1,7 +1,7 @@
-from receiver.Book import extract_book_data
-from receiver.book.Book import commit_raw_book
-from receiver.JSONReceiver import JSONReceiver
-from receiver.MessageHandlingStrategy import MessageHandlingStrategy
+from receiver.book.Book import extract_book_data
+from receiver.book.BookDBInteractions import commit_raw_book
+from receiver.receiver.JSONReceiver import JSONReceiver
+from receiver.receiver.MessageHandlingStrategy import MessageHandlingStrategy
 
 
 class CommitRawBook(MessageHandlingStrategy):
