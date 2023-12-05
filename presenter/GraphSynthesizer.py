@@ -1,8 +1,4 @@
-def get_book_identifier(row) -> str:
-    if row["book_name"]:
-        return row["book_name"]
-    return row["book_id"]
-
-
-def compute_presented_name(book_dataframe):
-    return book_dataframe.apply(get_book_identifier, axis=1)
+def compute_book_name_column(book_dataframe):
+    return book_dataframe.apply(
+        lambda row: row["book_name"] if row["book_name"] else row["book_id"]
+        , axis=1)
