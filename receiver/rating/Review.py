@@ -1,6 +1,6 @@
-from receiver.Rating import Rating
 from receiver.log import logger
 from receiver.postgresql.AsyncPostgresConnection import AsyncPostgresConnection
+from receiver.Rating import Rating
 
 
 async def commit_review(rating: Rating) -> None:
