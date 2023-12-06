@@ -1,31 +1,34 @@
+from sqlalchemy import delete, select
+from sqlalchemy.dialects.postgresql import insert
+
 from book_batch_processor.log import logger
 from book_batch_processor.postgres.AsyncPostgresConnection import AsyncPostgresConnection
+from sql_alchemy.Book import Book
+from sql_alchemy.UnprocessedBook import UnprocessedBook
 
 
 async def organize_book_data():
-    async with await AsyncPostgresConnection.get_connection() as connection:
-        QUERY = """INSERT INTO hafifa.book (book_id, book_name) SELECT isbn as book_id, book_title as book_name FROM hafifa.unprocessed_books ON CONFLICT DO NOTHING;"""
+    async with AsyncPostgresConnection.get_connection() as session:
+        UNPROCESSED_BOOK_SELECTION = select(
+            UnprocessedBook.isbn.label('book_id'),
+            UnprocessedBook.book_title.label('book_name'))
 
-        logger.debug("Queried unprocessed books")
+        QUERY = insert(Book).from_select(
+            ['book_id', 'book_name'],
+            UNPROCESSED_BOOK_SELECTION
+        ).on_conflict_do_nothing()
 
-        results = await connection.execute(QUERY)
-        inserted_successfully = results.startswith("INSERT")
+        await session.execute(QUERY)
 
-        if inserted_successfully:
-            logger.info(f"Processed books successfully. {results}")
-        else:
-            raise RuntimeError(f"An error has occurred {results}")
+        logger.info(f"Processed books successfully.")
+
+        await session.commit()
 
 
 async def clear_processed_books():
-    async with await AsyncPostgresConnection.get_connection() as connection:
-        QUERY = "DELETE FROM hafifa.unprocessed_books;"
+    async with AsyncPostgresConnection.get_connection() as session:
+        QUERY = delete(UnprocessedBook)
+        await session.execute(QUERY)
 
-        results = await connection.execute(QUERY)
-
-        deleted_successfully = results.startswith("DELETE")
-
-        if deleted_successfully:
-            logger.info(f"Cleared processed books successfully. {results}")
-        else:
-            raise RuntimeError(f"An error has occurred {results}")
+        logger.info(f"Cleared processed books successfully.")
+        await session.commit()

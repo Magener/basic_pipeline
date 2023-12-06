@@ -1,27 +1,36 @@
-import asyncpg
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
 
-from receiver.consts import DB_NAME, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, COMMAND_TIMEOUT
+from receiver.consts import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
 
 
 class AsyncPostgresConnection:
-    __connection_pool = None
+    __engine = None
+    __session_generator = None
 
     @classmethod
-    async def get_connection(cls):
-        await cls.__ensure_pool_is_connected()
+    def get_connection(cls):
+        cls.__ensure_pool_is_connected()
 
-        return cls.__connection_pool.acquire()
+        return cls.__session_generator()
 
     @classmethod
-    async def __ensure_pool_is_connected(cls):
-        if not cls.__connection_pool or cls.__connection_pool.is_closing():
-            cls.__connection_pool = await asyncpg.create_pool(user=DB_USER, password=DB_PASSWORD,
-                                                              database=DB_NAME, host=DB_HOST, port=DB_PORT,
-                                                              command_timeout=COMMAND_TIMEOUT)
+    def __ensure_pool_is_connected(cls):
+        if not cls.__engine:
+            DB_CONNECTION_POOL_MIN_SIZE = 10  # TODO: move to .env
+            DB_CONNECTION_POOL_MAX_SIZE = 20
+            cls.__engine = create_async_engine(
+                f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
+                echo=True,
+                pool_size=DB_CONNECTION_POOL_MIN_SIZE, max_overflow=DB_CONNECTION_POOL_MAX_SIZE
+            )
+
+            cls.__session_generator = sessionmaker(cls.__engine, class_=AsyncSession, expire_on_commit=False)
 
     @classmethod
     async def close(cls) -> None:
-        if not cls.__connection_pool:
-            await cls.__connection_pool.close()
+        if not cls.__engine:
+            await cls.__engine.dispose()
 
-        cls.__connection_pool = None
+        cls.__engine = None
+        cls.__session_generator = None

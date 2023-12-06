@@ -1,20 +1,17 @@
+from sqlalchemy import insert
+
 from receiver.book.Book import Book
 from receiver.log import logger
 from receiver.postgresql.AsyncPostgresConnection import AsyncPostgresConnection
+from sql_alchemy.UnprocessedBook import UnprocessedBook
 
 
 async def commit_raw_book(book: Book):
-    async with await AsyncPostgresConnection.get_connection() as connection:
-        QUERY = "INSERT INTO hafifa.unprocessed_books" \
-                "(isbn, book_title, book_author, year_of_publication, publisher)" \
-                " VALUES ($1, $2, $3, $4, $5);"
+    async with AsyncPostgresConnection.get_connection() as session:
+        QUERY = insert(UnprocessedBook).values((book.id, book.book_title, book.book_author,
+                                                book.year_of_publication, book.publisher))
 
-        result_message = await connection.execute(QUERY, book.id, book.book_title, book.book_author,
-                                                  book.year_of_publication, book.publisher)
+        await session.execute(QUERY)
+        await session.commit()
 
-        insert_successful = result_message.startswith("INSERT")
-
-        if insert_successful:
-            logger.debug(f"Regstered {book} in database.")
-        else:
-            raise RuntimeError(f"Insertion has failed: {result_message}")
+        logger.debug(f"Regstered {book} in database.")
