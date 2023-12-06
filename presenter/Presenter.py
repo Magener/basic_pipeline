@@ -10,7 +10,7 @@ def present_books(book_dataframe):
     plt.bar(compute_book_name_column(book_dataframe), book_dataframe['avg_score'], color='skyblue')
     plt.xlabel('book')
     plt.ylabel('avg_score')
-    plt.title(f'Top {BOOKS_PRESENTED} Books by Rating')
+    plt.title(f'Top {BOOKS_PRESENTED} Books by RatingModel')
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.show()

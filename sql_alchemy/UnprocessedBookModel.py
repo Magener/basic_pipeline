@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sql_alchemy.DBBase import Base
 
 
-class UnprocessedBook(Base):
+class UnprocessedBookModel(Base):
     __tablename__ = "unprocessed_books"
     isbn: Mapped[str] = mapped_column(primary_key=True)
     book_title: Mapped[str]

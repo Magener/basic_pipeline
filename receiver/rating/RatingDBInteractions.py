@@ -1,19 +1,9 @@
 from sqlalchemy import insert
-from sqlalchemy.orm import Mapped, mapped_column
 
 from receiver.log import logger
 from receiver.postgresql.AsyncPostgresConnection import AsyncPostgresConnection
 from receiver.rating.Rating import Rating
-from sql_alchemy.DBBase import Base
-
-
-class RatingModel(Base):
-    __tablename__ = "ratings"
-
-    rating_id: Mapped[int] = mapped_column(primary_key=True, server_default='DEFAULT')
-    reviewer_id: Mapped[int]
-    book_id: Mapped[str]  # TODO: add relationship as necessary.
-    score: Mapped[int]
+from sql_alchemy.RatingModel import RatingModel
 
 
 async def commit_review(rating: Rating) -> None:
