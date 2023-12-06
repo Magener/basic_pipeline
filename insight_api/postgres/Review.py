@@ -1,20 +1,35 @@
-from typing import List, Dict
+from typing import Dict, List
+
+from sqlalchemy import desc, func, select, Subquery
 
 from insight_api.postgres.AsyncPostgresConnection import AsyncPostgresConnection
+from sql_alchemy.Book import Book
+from sql_alchemy.Rating import Rating
 
 
 async def find_top_rated_books(minimum_ratings: int, presented_amount: int = None) -> List[Dict]:
-    async with await AsyncPostgresConnection.get_connection() as connection:
-        optional_query_limitation = "LIMIT $2" if presented_amount else ""
-        optional_query_argument = [presented_amount] if presented_amount else []
+    async with AsyncPostgresConnection.get_connection() as session:
+        AVERAGE_BOOK_RATINGS = await __average_book_ratings_subquery(minimum_ratings, presented_amount)
 
-        BOOK_SCORE_QUERY = 'SELECT book_id, AVG(score) as avg_score FROM hafifa.ratings ' \
-                           'GROUP BY book_id HAVING COUNT(*) > $1 ' \
-                           f'ORDER BY avg_score DESC {optional_query_limitation}'
+        query = select(
+            Book.book_name,
+            AVERAGE_BOOK_RATINGS.c.book_id,
+            AVERAGE_BOOK_RATINGS.c.average,
+        ).select_from(AVERAGE_BOOK_RATINGS.join(Book, AVERAGE_BOOK_RATINGS.c.book_id == Book.book_id, isouter=True))
 
-        BOOK_NAME_AND_SCORES_QUERY = f"SELECT score.book_id, book.book_name, score.avg_score FROM ({BOOK_SCORE_QUERY}) score " \
-                                     "LEFT JOIN hafifa.book book ON score.book_id=book.book_id"
+        result = await session.execute(query)
 
-        result = await connection.fetch(BOOK_NAME_AND_SCORES_QUERY, minimum_ratings, *optional_query_argument)
+        # TODO: extract method?
+        return [{"book_name": row[0], "book_id": row[1], "avg_score": row[2]} for row in result.fetchall()]
 
-        return [dict(row) for row in result]
+
+async def __average_book_ratings_subquery(minimum_ratings: int, presented_amount: int = None) -> Subquery:
+    AVERAGE_BOOK_RATINGS = select(Rating.book_id, func.avg(Rating.score).label('average')).group_by(
+        Rating.book_id).order_by(
+        desc("average")).having(func.count(Rating.score) > minimum_ratings)
+
+    if presented_amount:
+        AVERAGE_BOOK_RATINGS = AVERAGE_BOOK_RATINGS.limit(presented_amount)
+    AVERAGE_BOOK_RATINGS = AVERAGE_BOOK_RATINGS.alias("score")
+
+    return AVERAGE_BOOK_RATINGS

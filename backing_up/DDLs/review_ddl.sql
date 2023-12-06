@@ -5,4 +5,4 @@ CREATE TABLE IF NOT EXISTS hafifa.ratings (
     reviewer_id INT,
     book_id VARCHAR(20),
     score INT
-);
+ ); -- no foreign key constraint since they are updated differently
