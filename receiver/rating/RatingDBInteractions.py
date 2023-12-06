@@ -1,17 +1,27 @@
+from sqlalchemy import insert
+from sqlalchemy.orm import Mapped, mapped_column
+
 from receiver.log import logger
 from receiver.postgresql.AsyncPostgresConnection import AsyncPostgresConnection
 from receiver.rating.Rating import Rating
+from sql_alchemy.DBBase import Base
+
+
+class RatingModel(Base):
+    __tablename__ = "ratings"
+
+    rating_id: Mapped[int] = mapped_column(primary_key=True, server_default='DEFAULT')
+    reviewer_id: Mapped[int]
+    book_id: Mapped[str]  # TODO: add relationship as necessary.
+    score: Mapped[int]
 
 
 async def commit_review(rating: Rating) -> None:
-    async with await AsyncPostgresConnection.get_connection() as connection:
-        QUERY = "INSERT INTO hafifa.ratings(reviewer_id, book_id, score) VALUES ($1, $2, $3);"
+    async with AsyncPostgresConnection.get_connection() as session:
+        QUERY = insert(RatingModel).values(reviewer_id=rating.reviewer_id, book_id=rating.book_id, score=rating.score)
 
-        result_message = await connection.execute(QUERY, rating.reviewer_id, rating.book_id, rating.score)
+        await session.execute(QUERY)
 
-        insert_successful = result_message.startswith("INSERT")
+        await session.commit()
 
-        if insert_successful:
-            logger.info(f"Regstered {rating} in database.")
-        else:
-            raise RuntimeError(f"Insertion has failed: {result_message}")
+        logger.info(f"Regstered {rating} in database.")
