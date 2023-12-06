@@ -1,16 +1,11 @@
-from sqlalchemy import insert
-
 from receiver.log import logger
 from receiver.postgresql.AsyncPostgresConnection import AsyncPostgresConnection
-from receiver.rating.Rating import Rating
 from sql_alchemy.RatingModel import RatingModel
 
 
-async def commit_review(rating: Rating) -> None:
+async def commit_review(rating: RatingModel) -> None:
     async with AsyncPostgresConnection.get_connection() as session:
-        QUERY = insert(RatingModel).values(reviewer_id=rating.reviewer_id, book_id=rating.book_id, score=rating.score)
-
-        await session.execute(QUERY)
+        session.add(rating)
 
         await session.commit()
 

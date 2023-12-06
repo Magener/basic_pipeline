@@ -1,7 +1,10 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from __future__ import annotations
+
+from typing import Dict
+
+from sqlalchemy.orm import Mapped, mapped_column
 
 from sql_alchemy.DBBase import Base
-from sql_alchemy.BookModel import BookModel
 
 
 class RatingModel(Base):
@@ -10,4 +13,16 @@ class RatingModel(Base):
     reviewer_id: Mapped[int]
     score: Mapped[int]
     book_id: Mapped[str]
-    book: Mapped[BookModel] = relationship("Book", foreign_keys=[BookModel.book_id], primaryjoin='Book.book_id == Rating.book_id')
+
+    # book: Mapped[BookModel] #= relationship("Book", foreign_keys=[BookModel.book_id], primaryjoin='Book.book_id == Rating.book_id')
+
+    def apply_transformation(self) -> RatingModel:
+        self.score /= 2
+        return self
+
+
+def extract_rating_data(rating_data: Dict) -> RatingModel:
+    return RatingModel(
+        reviewer_id=int(rating_data["User-ID"]),
+        book_id=rating_data["ISBN"],
+        score=int(rating_data["Book-Rating"]))

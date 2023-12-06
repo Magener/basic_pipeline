@@ -24,7 +24,8 @@ async def find_top_rated_books(minimum_ratings: int, presented_amount: int = Non
 
 
 async def __average_book_ratings_subquery(minimum_ratings: int, presented_amount: int = None) -> Subquery:
-    AVERAGE_BOOK_RATINGS = select(RatingModel.book_id, func.avg(RatingModel.score).label('average')).group_by(
+    AVERAGE_BOOK_RATINGS = select(RatingModel.book_id, func.avg(RatingModel.score).label('average'))\
+        .group_by(
         RatingModel.book_id).order_by(
         desc("average")).having(func.count(RatingModel.score) > minimum_ratings)
 

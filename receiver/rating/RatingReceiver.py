@@ -1,6 +1,6 @@
 from receiver.receiver.JSONReceiver import JSONReceiver
 from receiver.receiver.MessageHandlingStrategy import MessageHandlingStrategy
-from receiver.rating.Rating import extract_rating_data
+from sql_alchemy.RatingModel import extract_rating_data
 from receiver.rating.RatingDBInteractions import commit_review
 
 
