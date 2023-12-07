@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Coroutine
 
-from receiver.log import logger
+from transformers.log import logger
 
 
 class MessageHandlingStrategy(ABC):

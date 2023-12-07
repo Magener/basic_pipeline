@@ -3,10 +3,10 @@ import json
 
 from aiokafka import AIOKafkaConsumer
 
-from receiver.consts import KAFKA_BROKER_URL, RATING_TOPIC_NAME
-from receiver.log import logger
+from transformers.consts import KAFKA_BROKER_URL, RATING_TOPIC_NAME
+from transformers.log import logger
 from temporarily_shared_files.sql_alchemy.AsyncPostgresConnection import AsyncPostgresConnection
-from receiver.receiver.MessageHandlingStrategy import error_handling_async_wrapper, MessageHandlingStrategy
+from transformers.receiver.MessageHandlingStrategy import error_handling_async_wrapper, MessageHandlingStrategy
 
 
 class JSONReceiver:

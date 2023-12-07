@@ -1,6 +1,6 @@
 from temporarily_shared_files.sql_alchemy.repositories.BookRepository import commit_raw_book
-from receiver.receiver.JSONReceiver import JSONReceiver
-from receiver.receiver.MessageHandlingStrategy import MessageHandlingStrategy
+from transformers.receiver.JSONReceiver import JSONReceiver
+from transformers.receiver.MessageHandlingStrategy import MessageHandlingStrategy
 from temporarily_shared_files.sql_alchemy.models.UnprocessedBookModel import extract_book_data
 
 
