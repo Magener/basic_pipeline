@@ -4,7 +4,7 @@ import time
 
 from confluent_kafka.cimpl import Producer
 
-from sensor.CSVLoader import generator_from_csv
+from sensor.sensor.CSVLoader import generator_from_csv
 from sensor.consts import RATINGS_FILE_PATH, KAFKA_BROKER_URL, RATING_TOPIC_NAME, MIN_NEW_RATING_RATE, \
     MAX_NEW_RATING_RATE
 from sensor.log import logger
