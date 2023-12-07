@@ -1,10 +1,10 @@
 import asyncio
 from typing import Callable
 
-from book_batch_processor.consts import PROCESSING_INTERVAL
 from book_batch_processor.batch_processor.ExitCatcher import ExitCatcher
-from book_batch_processor.log import logger
 from book_batch_processor.batch_processor.MessageHandling import error_handling_async_wrapper
+from book_batch_processor.consts import PROCESSING_INTERVAL
+from book_batch_processor.log import logger
 from temporarily_shared_files.sql_alchemy.repositories.BookRepository import clear_processed_books, \
     organize_book_data
 
@@ -12,7 +12,7 @@ from temporarily_shared_files.sql_alchemy.repositories.BookRepository import cle
 async def periodically_execute_callback(callback: Callable) -> None:
     while True:
         try:
-            await callback()
+            asyncio.create_task(callback())
             await asyncio.sleep(PROCESSING_INTERVAL)
         except BaseException as e:
             logger.error(f"An error has occurred! {e}")
