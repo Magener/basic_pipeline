@@ -1,7 +1,5 @@
 .idea
 venv
 create
-/*/.env
-/**/*/.env
-/*/*/.env
+/**/.env
 /temporarily_shared_files/sql_alchemy/.env
