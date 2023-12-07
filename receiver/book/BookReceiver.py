@@ -1,7 +1,7 @@
-from receiver.book.BookDBInteractions import commit_raw_book
+from temporarily_shared_files.sql_alchemy.repositories.BookRepository import commit_raw_book
 from receiver.receiver.JSONReceiver import JSONReceiver
 from receiver.receiver.MessageHandlingStrategy import MessageHandlingStrategy
-from sql_alchemy.UnprocessedBookModel import extract_book_data
+from temporarily_shared_files.sql_alchemy.models.UnprocessedBookModel import extract_book_data
 
 
 class CommitRawBook(MessageHandlingStrategy):

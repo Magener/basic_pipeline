@@ -5,7 +5,8 @@ from book_batch_processor.consts import PROCESSING_INTERVAL
 from book_batch_processor.ExitCatcher import ExitCatcher
 from book_batch_processor.log import logger
 from book_batch_processor.MessageHandling import error_handling_async_wrapper
-from book_batch_processor.postgres.BookOperations import clear_processed_books, organize_book_data
+from temporarily_shared_files.sql_alchemy.repositories.BookRepository import clear_processed_books, \
+    organize_book_data
 
 
 async def periodically_execute_callback(callback: Callable) -> None:

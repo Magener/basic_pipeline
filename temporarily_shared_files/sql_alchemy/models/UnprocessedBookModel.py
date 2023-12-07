@@ -1,10 +1,8 @@
-#TODO: should I move it to batch book processing?
-    # contained within BookDBInteractions as well
 from typing import Dict
 
 from sqlalchemy.orm import Mapped, mapped_column
 
-from sql_alchemy.DBBase import Base
+from temporarily_shared_files.sql_alchemy.models.DBBase import Base
 
 
 class UnprocessedBookModel(Base):

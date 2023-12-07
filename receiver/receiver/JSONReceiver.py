@@ -5,7 +5,7 @@ from aiokafka import AIOKafkaConsumer
 
 from receiver.consts import KAFKA_BROKER_URL, RATING_TOPIC_NAME
 from receiver.log import logger
-from receiver.postgresql.AsyncPostgresConnection import AsyncPostgresConnection
+from temporarily_shared_files.sql_alchemy.AsyncPostgresConnection import AsyncPostgresConnection
 from receiver.receiver.MessageHandlingStrategy import error_handling_async_wrapper, MessageHandlingStrategy
 
 

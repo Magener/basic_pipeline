@@ -1,7 +1,7 @@
 from receiver.receiver.JSONReceiver import JSONReceiver
 from receiver.receiver.MessageHandlingStrategy import MessageHandlingStrategy
-from sql_alchemy.RatingModel import extract_rating_data
-from receiver.rating.RatingDBInteractions import commit_review
+from temporarily_shared_files.sql_alchemy.models.RatingModel import extract_rating_data
+from temporarily_shared_files.sql_alchemy.repositories.RatingRepository import commit_review
 
 
 class CommitReview(MessageHandlingStrategy):

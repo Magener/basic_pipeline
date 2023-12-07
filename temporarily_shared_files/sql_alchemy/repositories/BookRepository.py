@@ -1,10 +1,19 @@
 from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert
 
-from book_batch_processor.log import logger
-from book_batch_processor.postgres.AsyncPostgresConnection import AsyncPostgresConnection
-from sql_alchemy.BookModel import BookModel
-from sql_alchemy.UnprocessedBookModel import UnprocessedBookModel
+from temporarily_shared_files.sql_alchemy.AsyncPostgresConnection import AsyncPostgresConnection
+from temporarily_shared_files.sql_alchemy.log import logger
+from temporarily_shared_files.sql_alchemy.models.BookModel import BookModel
+from temporarily_shared_files.sql_alchemy.models.UnprocessedBookModel import UnprocessedBookModel
+
+
+async def commit_raw_book(book: UnprocessedBookModel):
+    async with AsyncPostgresConnection.get_connection() as session:
+        session.add(book)
+
+        await session.commit()
+
+        logger.debug(f"Regstered {book} in database.")
 
 
 async def organize_book_data():

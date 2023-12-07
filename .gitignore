@@ -2,3 +2,5 @@
 venv
 create
 /*/.env
+/**/.env
+/*/*/.env

@@ -1,7 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from receiver.consts import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
+from temporarily_shared_files.sql_alchemy.consts import DB_CONNECTION_POOL_MAX_SIZE, DB_CONNECTION_POOL_MIN_SIZE, \
+    DB_HOST, DB_NAME, DB_PASSWORD, \
+    DB_PORT, DB_USER
 
 
 class AsyncPostgresConnection:
@@ -17,8 +19,6 @@ class AsyncPostgresConnection:
     @classmethod
     def __ensure_pool_is_connected(cls):
         if not cls.__engine:
-            DB_CONNECTION_POOL_MIN_SIZE = 10  # TODO: move to .env
-            DB_CONNECTION_POOL_MAX_SIZE = 20
             cls.__engine = create_async_engine(
                 f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
                 echo=True,

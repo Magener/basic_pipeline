@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column
 
-from sql_alchemy.DBBase import Base
+from temporarily_shared_files.sql_alchemy.models.DBBase import Base
 
 
 class BookModel(Base):

@@ -6,8 +6,8 @@ from fastapi import status
 
 from insight_api.consts import MIN_RATINGS_FOR_INCLUSION, PORT, HOST
 from insight_api.log import logger
-from insight_api.postgres.AsyncPostgresConnection import AsyncPostgresConnection
-from insight_api.postgres.Review import find_top_rated_books
+from temporarily_shared_files.sql_alchemy.AsyncPostgresConnection import AsyncPostgresConnection
+from temporarily_shared_files.sql_alchemy.repositories.Review import find_top_rated_books
 
 # Allows for tear down, yield separates set up from tear down parts
 @asynccontextmanager
