@@ -2,13 +2,14 @@ from typing import Dict, List, Tuple
 
 from sqlalchemy import desc, func, select, Subquery
 
-from temporarily_shared_files.sql_alchemy.log import logger
 from temporarily_shared_files.sql_alchemy.AsyncPostgresConnection import AsyncPostgresConnection
+from temporarily_shared_files.sql_alchemy.log import logger
 from temporarily_shared_files.sql_alchemy.models.BookModel import BookModel
-from temporarily_shared_files.sql_alchemy.models.RatingModel import RatingModel
+from temporarily_shared_files.sql_alchemy.models.RatingModel import extract_rating_data, RatingModel
 
 
-async def commit_review(rating: RatingModel) -> None:
+async def commit_review(rating_data: dict) -> None:
+    rating = extract_rating_data(rating_data)
     async with AsyncPostgresConnection.get_connection() as session:
         session.add(rating)
 

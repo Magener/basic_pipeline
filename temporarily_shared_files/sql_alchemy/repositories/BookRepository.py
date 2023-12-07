@@ -4,10 +4,11 @@ from sqlalchemy.dialects.postgresql import insert
 from temporarily_shared_files.sql_alchemy.AsyncPostgresConnection import AsyncPostgresConnection
 from temporarily_shared_files.sql_alchemy.log import logger
 from temporarily_shared_files.sql_alchemy.models.BookModel import BookModel
-from temporarily_shared_files.sql_alchemy.models.UnprocessedBookModel import UnprocessedBookModel
+from temporarily_shared_files.sql_alchemy.models.UnprocessedBookModel import extract_book_data, UnprocessedBookModel
 
 
-async def commit_raw_book(book: UnprocessedBookModel):
+async def commit_raw_book(book_data: dict):
+    book = extract_book_data(book_data)
     async with AsyncPostgresConnection.get_connection() as session:
         session.add(book)
 

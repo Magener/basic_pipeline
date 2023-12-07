@@ -1,7 +1,6 @@
+from temporarily_shared_files.sql_alchemy.DBEndpoint import DBEndpoint
 from transformers.receiver.JSONReceiver import JSONReceiver
 from transformers.receiver.MessageHandlingStrategy import MessageHandlingStrategy
-from temporarily_shared_files.sql_alchemy.models.RatingModel import extract_rating_data
-from temporarily_shared_files.sql_alchemy.repositories.RatingRepository import commit_review
 
 
 def apply_transformation(rating_data: dict) -> dict:
@@ -11,7 +10,8 @@ def apply_transformation(rating_data: dict) -> dict:
 
 class CommitReview(MessageHandlingStrategy):
     async def on_message(self, rating_data: dict) -> None:
-        await commit_review(extract_rating_data(apply_transformation(rating_data)))
+        await DBEndpoint.get_command_parser().parse_command(
+            {"name": "commit_review", "args": {"rating_data": apply_transformation(rating_data)}})
 
 
 if __name__ == "__main__":
