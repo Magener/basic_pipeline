@@ -17,10 +17,6 @@ class RatingModel(Base):
 
     book = relationship("BookModel", foreign_keys=[BookModel.book_id], primaryjoin='BookModel.book_id == RatingModel.book_id')
 
-    def apply_transformation(self) -> RatingModel:
-        self.score /= 2
-        return self
-
 
 def extract_rating_data(rating_data: Dict) -> RatingModel:
     return RatingModel(
