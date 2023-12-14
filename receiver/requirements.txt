@@ -1,4 +1,0 @@
-aiokafka==0.8.1
-asyncpg==0.29.0
-insight_api==0.5
-python-dotenv==1.0.0
